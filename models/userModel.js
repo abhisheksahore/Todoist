@@ -50,6 +50,18 @@ const UserModelSchema = new mongoose.Schema ({
                 type: Date
             }
         }
+    },
+    "projects": {
+        type: Array,
+        default: []
+    },
+    "sections": {
+        type: Array,
+        default: []
+    },
+    "tasks": {
+        type: Array,
+        default: []
     }
 })
 

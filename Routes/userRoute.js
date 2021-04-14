@@ -11,6 +11,10 @@ const router = express.Router();
 
 router.post('/signup', async(req, res) => {
     try {
+        console.log(req.body)
+        console.log(req.body.username)
+        console.log(req.body.email)
+        
         if (req.body.username && req.body.email && req.body.password) {
             const user_does_exist = await UserModel.find({email: req.body.email})
             console.log('USER_DOES_EXIST',user_does_exist);
@@ -117,11 +121,11 @@ router.post('/login', async (req, res) => {
 })
 
 router.get('/', auth, (req, res) => {
-    res.send('hello');
+    
 })
 
-router.get('/testing', (req, res)=> {
-    res.status(200).send("chal raha hai");
-})
+// router.get('/testing', (req, res)=> {
+//     res.status(200).send("chal raha hai");
+// })
 
 module.exports = router;
