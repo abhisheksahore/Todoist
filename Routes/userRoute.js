@@ -121,7 +121,7 @@ router.get('/', auth, (req, res) => {
 })
 
 router.get('/testing', (req, res)=> {
-    res.status(401).json({message: "chal raha hai"});
+    res.status(401).send("chal raha hai");
 })
 
 module.exports = router;
