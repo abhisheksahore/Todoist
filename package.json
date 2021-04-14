@@ -4,7 +4,7 @@
   "description": "This is the backend for the todoist app.",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server"
+    "start": "node server.js"
   },
   "author": "Abhishek Sahore",
   "license": "ISC",
