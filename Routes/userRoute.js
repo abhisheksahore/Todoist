@@ -19,22 +19,23 @@ router.post('/signup', async(req, res) => {
                 const secret_salt = await bcrypt.genSalt();
                 const hashed_password = await bcrypt.hash(req.body.password, secret_salt);
                 console.log('a');
+                console.log(req.body.preferences.date_time_format)
                 const newUser = new UserModel({
                     username: req.body.username,
                     password: hashed_password,
                     email: req.body.email,
-                    Preferences: {
-                        theme: req.body.theme,
+                    preferences: {
+                        theme: req.body.preferences.theme,
                         date_time_format: {
-                            time_zone: req.body.time_zone,
-                            date_format: req.body.date_format,
-                            time_format: req.body.time_format
+                            time_zone: req.body.preferences.date_time_format.time_zone,
+                            date_format: req.body.preferences.date_time_format.date_format,
+                            time_format: req.body.preferences.date_time_format.time_format
                         },
                         reminder_prefs: {
-                            email: req.body.email,
-                            desktop: req.body.desktop,
-                            should_remind: req.body.should_remind,
-                            remind_before: req.body.remind_before
+                            email: req.body.preferences.reminder_prefs.email,
+                            desktop: req.body.preferences.reminder_prefs.desktop,
+                            should_remind: req.body.preferences.reminder_prefs.should_remind,
+                            remind_before: req.body.preferences.reminder_prefs.remind_before
                         }
                     }
                 })
@@ -48,6 +49,7 @@ router.post('/signup', async(req, res) => {
             res.status(400).json({message: "provide email and passworrd."});
         }
     } catch (error) {
+        console.error(error)
         res.status(404).json({error})
     }
 })
@@ -74,14 +76,24 @@ router.post('/login', async (req, res) => {
     try {
         if (req.body.username && req.body.password) {
             // console.log(SECRET_KEY)
+            
             jwt.sign(req.body, SECRET_KEY, async (err, token) => {
                 if (err) {
                     res.status(404).send(err);
                 }
-                // console.log(token);
-                const does_username_exists = await UserModel.find({username: req.body.username});
+                // console.log(username_or_email);
+                console.log(req.body.username);
+                let does_username_exists;
+                if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(req.body.username)) {
+                    
+                    does_username_exists = await UserModel.find({ email: req.body.username});
+
+                } else {
+                    does_username_exists = await UserModel.find({ username: req.body.username});
+                }
+                console.log('Does_username_exists',does_username_exists);
                 if (does_username_exists.length === 1) {
-                    console.log(does_username_exists);
+                    console.log(does_username_exists);3
                     if (await bcrypt.compare(req.body.password, does_username_exists[0].password)) {
                         // console.log("a");
                         const user_data = does_username_exists[0];
@@ -89,18 +101,8 @@ router.post('/login', async (req, res) => {
                     } else {
                         res.status(400).json({message: "Wrong password!"});
                     }
-                } else if (does_username_exists.length === 0) {
-                    const does_email_exists = await UserModel.find({email: req.body.username});
-                    if (does_email_exists.length === 1) {
-                        if (await bcrypt.compare(req.body.password, does_email_exists[0].password)) {
-                            // console.log("a");
-
-                            const user_data = does_email_exists[0];
-                            res.status(200).json({user_data, token: token});                        
-                        } else {
-                            res.status(400).json({message: "Wrong password!"});
-                        }
-                    }
+                } else {
+                    res.status(401).json({message: "User not found"});
                 }
             })
             // console.log(req.body);

@@ -1,52 +1,52 @@
 const mongoose = require('mongoose');
 
 const UserModelSchema = new mongoose.Schema ({
-    username: {
+    "username": {
         type: String,
         required: true
     },
-    password: {
+    "password": {
         type: String,
         required: true
     },
-    email: {
+    "email": {
         type: String,
         required: true
     },
-    Preferences: {
-        theme: {
+    "preferences": {
+        "theme": {
             type: String,
             default: `light`
         },
-        date_time_format: {
-            time_zone: {
+        "date_time_format": {
+            "time_zone": {
                 type: String,
                 default: `(GMT+0530) Asia/Kolkata`
             },
-            date_format: {
+            "date_format": {
                 type: String,
                 default: 'yyyy-MM-dd'
             },
-            time_format: {
+            "time_format": {
                 type: String,
                 default: 'HH:mm'
             }
         },
-        reminder_prefs: {
-            via_email: {
+        "reminder_prefs": {
+            "via_email": {
                 type: Boolean,
                 default: true
             },
-            via_desktop: {
+            "via_desktop": {
                 type: Boolean,
                 default: false
             },
-            should_remind: {
+            "should_remind": {
                 type: Boolean,
                 required: true,
                 default: false
             },
-            remind_before: {
+            "remind_before": {
                 type: Date
             }
         }
