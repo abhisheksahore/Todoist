@@ -13,13 +13,13 @@ router.post('/signup', async(req, res) => {
     try {
         if (req.body.username && req.body.email && req.body.password) {
             const user_does_exist = await UserModel.find({email: req.body.email})
-            // console.log(user_does_exist);
+            console.log('USER_DOES_EXIST',user_does_exist);
             if (user_does_exist.length === 0) {
                 
                 const secret_salt = await bcrypt.genSalt();
                 const hashed_password = await bcrypt.hash(req.body.password, secret_salt);
                 console.log('a');
-                console.log(req.body.preferences.date_time_format)
+                console.log(req.body)
                 const newUser = new UserModel({
                     username: req.body.username,
                     password: hashed_password,
