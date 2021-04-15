@@ -8,7 +8,7 @@ const SubtaskModelSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    task_due_date: {
+    subtask_due_date: {
         type: Date,
     },
     comments: {
@@ -38,4 +38,4 @@ const SubtaskModelSchema = new mongoose.Schema({
 })
 
 const SubtaskModel = mongoose.model('SubtaskModel', SubtaskModelSchema);
-module.exports = subtaskModel;
+module.exports = SubtaskModel;

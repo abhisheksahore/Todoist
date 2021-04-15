@@ -113,7 +113,8 @@ router.get('/user', auth, async (req, res) => {
             getUser = await UserModel.find({ username: req.username});
         }
         console.log(getUser[0]._id)
-        res.status(200).json(getUser[0]);
+        const user = getUser[0];
+        res.status(200).json(user);
     } catch (error) {
         console.error(error)
         res.status(404).json({message: "error"})

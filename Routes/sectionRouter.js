@@ -1,6 +1,7 @@
 const express = require('express');
 const auth = require('../middlewares/getToken');
 const SectionModel = require('../models/sectionModel');
+const TaskModel = require('../models/taskModel');
 const router = express.Router();
 
 
@@ -30,9 +31,88 @@ router.post('/section', auth, async (req, res) => {
 // GET - Getting a section
 router.get('/section/:section_id', auth, async (req, res) => {
     try {
-                
+        if (req.params.section_id) {
+            const getSection = await SectionModel.find({_id: req.params.section_id});
+            const getSectionData = getSection[0];
+            res.status(200).json(getSectionData);
+        } else {
+            res.status(400).json({message: "send section_id in url params"});
+        }       
     } catch (error) {
         res.status(500).json({message: error.error});
+    }
+})
+
+
+// GET - getting all the sections 
+router.get('/:username', auth, async (req, res)=> {
+    try {
+        if (req.params.username) {
+            const getAllSection = await SectionModel.find({user_name: req.params.username});
+            const allSections = getAllSection[0];
+            res.status(200).json(allSections);
+        } else {
+            res.status(400).json({message: "send the username with the url params"});
+        }
+    } catch (error) {
+        res.status(500).json({message: error.error});
+    }
+})
+
+
+// PATCH - patching the section 
+router.patch('/section/:section_id/:section_name', auth, async (req, res) => {
+    try {
+        if (!req.params.section_id) {
+            res.status(400).json({message: "send the section id in url params"});
+        }
+
+        if (req.params.section_id && req.params.section_name) {
+            await SectionModel.updateOne({_id: req.params.section_id}, {$set: {section_name: req.params.section_name}});
+            const getUpdatedSection = await SectionModel.find({_id: req.params.section_id});
+            const updatedSection = getUpdatedSection[0];
+            res.status(200).json(updatedSection); 
+        } else {
+            res.status(400).json({message: "send the section name and section id in url params"});
+        }
+    } catch (error) {
+        res.status(500).json({message: error.error});
+    }
+})
+
+
+// GET - getting all the tasks belong to a particular section
+router.get('/section/:section_id/tasks', auth, async (req, res) => {
+    try {
+        if (req.params.section_id) {
+            const getSection = await SectionModel.find({_id: req.params.section_id});
+            const tasks = getSection[0].task_ids.reduce( async (tasks, task_id) => {
+                const getTask = await TaskModel.find({_id: task_id});
+                tasks.push(getTask[0]);
+                return tasks;
+            }, [])
+            res.status(200).json(tasks);
+        } else {
+            res.status(400).json({message: "send the section id in url params"});
+        }
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
+    }
+})
+
+
+
+// DELETE - deleting the section
+router.delete('/section/:section_id', auth, async (req, res) => {
+    try {
+        if (req.params.section_id) {
+            const deletedSection = await SectionModel.deleteOne({_id: req.params.section_id});
+            res.status(200).json({message: "Section deleted successfully."});
+        } else {
+            res.status(400).json({message: "SEND THE SECTION ID IN URL PARAMS TO DELETE THE SECTION."});
+        }
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
     }
 })
 

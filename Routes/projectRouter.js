@@ -69,7 +69,7 @@ router.get('tasks/:username/:project_id', auth, async (req, res) => {
             const getProject = await ProjectModel.find({user_name: req.params.username, _id: req.params.project_id});
             const projectData = getProject[0];
             const tasks = [];
-            projectData.forEach(async task_id => {
+            projectData.task_ids.forEach(async task_id => {
                 const getTask = await TaskModel.find({"_id": task_id, });
                 tasks.push(getTask[0]);
             })
@@ -91,7 +91,7 @@ router.get('sections/:username/:project_id', auth, async (req, res) => {
             const getProject = await ProjectModel.find({user_name: req.params.username, _id: req.params.project_id});
             const projectData = getProject[0];
             const sections = [];
-            projectData.forEach(async section_id => {
+            projectData.section_ids.forEach(async section_id => {
                 const getSection = await SectionModel.find({_id: section_id});
                 sections.push(getSection[0]);
             })

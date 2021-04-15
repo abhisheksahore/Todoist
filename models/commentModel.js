@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
 const CommentModelSchema = new mongoose.Schema({
-    user_name: {
-        type: String,
-        required: true
-    },
     commented_by: {
         type: String,
         required: true
@@ -13,12 +9,16 @@ const CommentModelSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    invited_user_ids: { 
+    task_id: {
+        type: String,
+        required: true
+    },
+    visible_to_usernames: { 
         type: Array, 
         default: []
     }
-})
+}) 
 
 const CommentModel = mongoose.model('CommentModel', CommentModelSchema);
 
-module.exports = commentModel;
+module.exports = CommentModel;
