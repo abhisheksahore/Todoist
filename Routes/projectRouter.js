@@ -34,9 +34,11 @@ router.post('/project', auth, async (req, res) => {
 router.get('/:username/:project_id', auth, async (req, res)=> {
     try {
         if (req.params.username && req.params.project_id) {
-
+            const getProject = await ProjectModel.find({ username: req.params.username, _id: req.params.project_id});
+            const getProjectObj = getProject[0]
+            res.status(200).json(getProjectObj);
         } else {
-            res.status(400).json({message: "send "})
+            res.status(400).json({message: "send username and project_id in url params."})
         }
     } catch (error) {
         res.status(500).json({message: error.error});
