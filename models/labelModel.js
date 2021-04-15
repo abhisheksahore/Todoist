@@ -9,7 +9,7 @@ const LabelModelSchema = new mongoose.Schema({
         type: String,
         dafault: "#ff6347"
     },
-    user_id: {
+    user_name: {
         type: String,
         required: true
     },

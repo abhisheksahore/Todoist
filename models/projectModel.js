@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const ProjectModelSchema = new mongoose.Schema({
-    user_id: {
+    user_name: {
         type: String,
         required: true
     },
@@ -25,7 +25,7 @@ const ProjectModelSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    invited_user_ids: { 
+    invited_user_names: { 
         type: Array, 
         default: []
     }

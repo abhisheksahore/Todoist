@@ -11,9 +11,6 @@ const router = express.Router();
 
 router.post('/signup', async(req, res) => {
     try {
-        console.log(req.body)
-        console.log(req.body.username)
-        console.log(req.body.email)
         
         if (req.body.username && req.body.email && req.body.password) {
             const user_does_exist = await UserModel.find({email: req.body.email})
@@ -28,20 +25,6 @@ router.post('/signup', async(req, res) => {
                     username: req.body.username,
                     password: hashed_password,
                     email: req.body.email,
-                    preferences: {
-                        theme: req.body.preferences.theme,
-                        date_time_format: {
-                            time_zone: req.body.preferences.date_time_format.time_zone,
-                            date_format: req.body.preferences.date_time_format.date_format,
-                            time_format: req.body.preferences.date_time_format.time_format
-                        },
-                        reminder_prefs: {
-                            email: req.body.preferences.reminder_prefs.email,
-                            desktop: req.body.preferences.reminder_prefs.desktop,
-                            should_remind: req.body.preferences.reminder_prefs.should_remind,
-                            remind_before: req.body.preferences.reminder_prefs.remind_before
-                        }
-                    }
                 })
                 console.log('b')
                 const createdUser = await newUser.save();
@@ -50,7 +33,7 @@ router.post('/signup', async(req, res) => {
                 res.status(400).json({msg: "email already exists"});
             }
         } else {
-            res.status(400).json({message: "provide email and passworrd."});
+            res.status(400).json({message: "provide email and password."});
         }
     } catch (error) {
         console.error(error)
@@ -97,7 +80,7 @@ router.post('/login', async (req, res) => {
                 }
                 console.log('Does_username_exists',does_username_exists);
                 if (does_username_exists.length === 1) {
-                    console.log(does_username_exists);3
+                    console.log(does_username_exists);
                     if (await bcrypt.compare(req.body.password, does_username_exists[0].password)) {
                         // console.log("a");
                         const user_data = does_username_exists[0];
@@ -120,12 +103,44 @@ router.post('/login', async (req, res) => {
     }
 })
 
-router.get('/', auth, (req, res) => {
+router.get('/user', auth, async (req, res) => {
     
+    try {
+        let getUser;
+        if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(req.username)) {
+            getUser = await UserModel.find({ email: req.username});
+        } else {
+            getUser = await UserModel.find({ username: req.username});
+        }
+        console.log(getUser[0]._id)
+        res.status(200).json(getUser[0]);
+    } catch (error) {
+        console.error(error)
+        res.status(404).json({message: "error"})
+    }
 })
 
-// router.get('/testing', (req, res)=> {
-//     res.status(200).send("chal raha hai");
-// })
+router.delete('/deleteUser', auth, async (req, res)=> {
+    try {
+        let getUser;
+        if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(req.username)) {
+            getUser = await UserModel.deleteOne({ "email": req.username});
+        } else {
+            getUser = await UserModel.deleteOne({ "username": req.username});
+        }
+
+        res.status(200).json({message: "User successfully deleted."});
+    } catch (error) {
+        res.status(500).json({message: "Error in completing the request."})
+    }
+})
+
+router.patch('/updateUser', auth, async (req, res) => {
+    try {
+        
+    } catch (error) {
+        res.status(500).json({message: "Error in completing the request."});
+    }
+})
 
 module.exports = router;

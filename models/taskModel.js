@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 
+
+
 const TaskModelSchema = new mongoose.Schema({
-    user_id: {
+    user_name: {
         type: String,
         required: true
     },
@@ -15,6 +17,7 @@ const TaskModelSchema = new mongoose.Schema({
     },
     task_due_date: {
         type: Date,
+        default: null
     },
     comments: {
         type: Array,
@@ -22,30 +25,39 @@ const TaskModelSchema = new mongoose.Schema({
     },
     label_ids: {
         type: Array,
-        dafault: []
+        default: []
     },
     priority: {
         type: Number,
         default: 4
     },
-    group_id: {
-        type: String
-    },
-    section_id: {
-        type: String
-    },
-    task_creation_date: {
+    // group_id: {
+    //     type: String
+    // },
+    // section_id: {
+    //     type: String
+    // },
+    
+    task_creation_timestamp: {
         type: Date,
         default: new Date()
     },
-    sublists_id: { 
+    subtasks_id: { 
         type: Array,
-        dafault: [] 
+        default: [] 
     },
     invited_user_ids: { 
         type: Array, 
         default: []
-    }
+    },
+    directly_in_project: { 
+        type: Boolean, 
+        required: true
+    },
+    in_section: { 
+        type: Boolean, 
+        required: true
+    } 
 })
 
 const TaskModel = mongoose.model('TaskModel', TaskModelSchema);
