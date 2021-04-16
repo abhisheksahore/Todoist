@@ -7,7 +7,7 @@ const LabelModelSchema = new mongoose.Schema({
     },
     label_color: {
         type: String,
-        dafault: "#ff6347"
+        default: "#ff6347"
     },
     user_name: {
         type: String,
