@@ -114,22 +114,23 @@ router.get('/:username/:project_id/sections', auth, async (req, res) => {
 router.patch('/:username/:project_id', auth, async (req, res) => {
     try {
 
-        const flag = false;
+        let flag = false;
         if (req.body.project_name) {
-            await ProjectModel.updateOne({user_name: req.params.username, _id: req.params.project_id}, {$set: {project_name: req.body.project_name}});
+            await ProjectModel.updateOne({_id: req.params.project_id}, {$set: {project_name: req.body.project_name}});
             flag = true;
-        }        
+        }    
         if (req.body.is_completed) {
-            await ProjectModel.updateOne({user_name: req.params.username, _id: req.params.project_id}, {$set: {is_completed: req.body.is_completed}});
+            const ab = await ProjectModel.updateOne({ _id: req.params.project_id}, {$set: {is_completed: req.body.is_completed}});
+            console.log(ab)
             flag = true;
         }        
         if (flag === true) {
-            const getUpdatedProject = await ProjectModel.find({_id: req.params.project_id});
+            const getUpdatedProject = await ProjectModel.find({_id: req.params.project_id});    
             const updatedProject = getUpdatedProject[0];
             res.status(200).json(updatedProject);
         }
     } catch (error) {
-        res.status(500).json({message: "Error in completing the request."})
+        res.status(500).json({message: error.message})
     }
 })
 
@@ -137,7 +138,7 @@ router.patch('/:username/:project_id', auth, async (req, res) => {
 router.delete('/:username/:project_id', auth, async (req, res)=> {
     try {
         if (req.params.project_id && req.params.username) {
-            const deletedProject = await ProjectModel.deleteOne({user_name: req.params.username, _id: req.params.project_id});
+            const deletedProject = await ProjectModel.deleteOne({_id: req.params.project_id});
             res.status(200).json(deletedProject);
         } else {
             res.status(400).json({message: "send the project_id in the url params."});
