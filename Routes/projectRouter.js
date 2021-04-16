@@ -3,6 +3,7 @@ const ProjectModel = require('../models/projectModel');
 const auth = require('../middlewares/getToken');
 const TaskModel = require('../models/taskModel');
 const SectionModel = require('../models/sectionModel');
+const UserModel = require('../models/userModel');
 
 const router = express.Router();
 
@@ -16,10 +17,12 @@ router.post('/project', auth, async (req, res) => {
         }
         if (req.body.username && req.body.project_name) {
             const newProject = new ProjectModel({
-                user_name: req.body.username,
+                
                 project_name: req.body.project_name
             })
             const projectCreated = await newProject.save();
+
+            await UserModel.updateOne({username: req.body.username}, {$push: {project: projectCreated._id}})
             res.status(200).json(projectCreated);
         } else {
             res.status(400).json({message: "send the username and project name in body of the request."});
@@ -31,10 +34,10 @@ router.post('/project', auth, async (req, res) => {
 
 //  GET - getting a project 
 
-router.get('/:username/:project_id', auth, async (req, res)=> {
+router.get('/:project_id', auth, async (req, res)=> {
     try {
-        if (req.params.username && req.params.project_id) {
-            const getProject = await ProjectModel.find({ username: req.params.username, _id: req.params.project_id});
+        if (req.params.project_id) {
+            const getProject = await ProjectModel.find({_id: req.params.project_id});
             const getProjectObj = getProject[0]
             res.status(200).json(getProjectObj);
         } else {
@@ -49,11 +52,14 @@ router.get('/:username/:project_id', auth, async (req, res)=> {
 // GET - Getting all the projects belong to a particular user.
 router.get('/:username', auth, async (req, res) => {
     try {
-        if (req.params.username === undefined) {
-            res.status(400).json({message: "Send the username in the url params"});
-        }
-        const getAllProjects = await ProjectModel.find({user_name: req.params.username});
-        res.status(200).json(getAllProjects);
+        const getUser = await UserModel.find({username: req.params.username});
+        const user = getUser[0];
+        const projects = user.projects.reduce(async (projects, id) => {
+            const getProject = await ProjectModel.find({_id: id});
+            projects.push(getProject[0]);
+            return projects;
+        }, [])
+        res.status(200).json(projects);
     } catch (error) {
        res.status(500).json({error: error.message}); 
     }
