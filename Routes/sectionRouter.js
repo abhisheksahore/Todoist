@@ -12,7 +12,7 @@ router.post('/section', auth, async (req, res) => {
         if (req.body.username === undefined) {
             res.status(400).json({message: "Send the username of the user in the body."});
         }
-        let Project_id;
+        let project_id;
         if (req.body.project_id) {
             project_id = req.body.project_id;
         } else {
