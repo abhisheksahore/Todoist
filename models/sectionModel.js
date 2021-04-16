@@ -18,7 +18,8 @@ const SectionModelSchema = new mongoose.Schema({
         default: []
     },
     project_id: {
-        type: String
+        type: String,
+        default: null
     }
 
 })
