@@ -1,5 +1,6 @@
 const express = require('express');
 const auth = require('../middlewares/getToken');
+const ProjectModel = require('../models/projectModel');
 const SectionModel = require('../models/sectionModel');
 const TaskModel = require('../models/taskModel');
 const router = express.Router();
@@ -11,6 +12,10 @@ router.post('/section', auth, async (req, res) => {
     try {
         if (req.body.username === undefined) {
             res.status(400).json({message: "Send the username of the user in the body."});
+        }
+        const is_project_id_valid = await ProjectModel.find({_id: req.body.project_id});
+        if (is_project_id_valid.length === 0) {
+            res.status(400).json({message: "invalid project id"});
         }
         let project_id;
         if (req.body.project_id) {

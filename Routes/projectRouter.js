@@ -93,12 +93,12 @@ router.get('/:username/projects', auth, async (req, res) => {
 
 
 // GET - Getting all the sections directly belong to a particular project.
-router.get('sections/:username/:project_id', auth, async (req, res) => {
+router.get('/:username/:project_id/sections', auth, async (req, res) => {
     try {
         if (req.params.username && req.params.project_id) {
+            console.log("Jennie")
             const getSectionsInProject = await SectionModel.find({project_id: req.params.project_id});
-            const sections = getSectionsInProject[0].sections;
-            res.status(200).json(sections);
+            res.status(200).json(getSectionsInProject);
         } else {
             res.status(400).json({message: "send the username and project_id in url params."});
         }
