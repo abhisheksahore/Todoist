@@ -50,16 +50,18 @@ router.get('/:project_id', auth, async (req, res)=> {
 
 
 // GET - Getting all the projects belong to a particular user.
-router.get('/:username', auth, async (req, res) => {
+router.get('/:username/projects', auth, async (req, res) => {
     try {
+        
         const getUser = await UserModel.find({username: req.params.username});
         const user = getUser[0];
-        const projects = user.projects.reduce(async (projects, id) => {
-            const getProject = await ProjectModel.find({_id: id});
-            projects.push(getProject[0]);
-            return projects;
-        }, [])
-        res.status(200).json(projects);
+        const pro = [];
+        for(let i = 0; i < user.projects.length; i++) {
+            const getProject = await ProjectModel.find({_id: user.projects[i]});
+            const project = getProject[0];
+            pro.push(project);
+        }
+        res.status(200).json(pro);
     } catch (error) {
        res.status(500).json({error: error.message}); 
     }
