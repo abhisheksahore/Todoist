@@ -89,23 +89,25 @@ router.patch('/section/:section_id/:section_name', auth, async (req, res) => {
 
 
 // GET - getting all the tasks belong to a particular section
-router.get('/section/:section_id/tasks', auth, async (req, res) => {
-    try {
-        if (req.params.section_id) {
-            const getSection = await SectionModel.find({_id: req.params.section_id});
-            const tasks = getSection[0].task_ids.reduce( async (tasks, task_id) => {
-                const getTask = await TaskModel.find({_id: task_id});
-                tasks.push(getTask[0]);
-                return tasks;
-            }, [])
-            res.status(200).json(tasks);
-        } else {
-            res.status(400).json({message: "send the section id in url params"});
-        }
-    } catch (error) {
-        res.status(500).json({message: "Internal server error"});
-    }
-})
+// router.get('/section/:section_id/tasks', auth, async (req, res) => {
+//     try {
+//         if (req.params.section_id) {
+//             const getSection = await SectionModel.find({_id: req.params.section_id});
+//             const tasks = getSection[0].task_ids.reduce( async (tasks, task_id) => {
+//                 const getTask = await TaskModel.find({_id: task_id});
+//                 tasks.push(getTask[0]);
+//                 return tasks;
+//             }, [])
+//             res.status(200).json(tasks);
+//         } else {
+//             res.status(400).json({message: "send the section id in url params"});
+//         }
+//     } catch (error) {
+//         res.status(500).json({message: "Internal server error"});
+//     }
+// })
+
+
 
 
 

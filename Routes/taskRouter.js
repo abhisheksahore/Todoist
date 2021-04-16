@@ -89,6 +89,20 @@ router.get('/:project_id/directly_in_project', auth, async (req, res)=> {
 })
 
 
+// GET - getting all the tasks belonging to a particular section.
+router.get('/:section_id', auth, async (req, res) => {
+    try {
+        if (req.params.section_id) {
+            const getTasks = await TaskModel.find({section_id: req.params.section_id});
+            const tasks = getTasks[0];res.status(200).json(tasks);
+        } else {
+            res.status(400).json({message: "send section id in url params"});
+        }
+    } catch (error) {
+        res.status(500).json({message: "Error in completing the request."})
+    }
+})
+
 
 router.get('/:username/today', auth, async (req, res) => {
     try {
