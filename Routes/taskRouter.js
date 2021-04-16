@@ -77,6 +77,45 @@ router.get('/:username/today', auth, async (req, res) => {
     }
 })
 
+
+// PATCH - patching a task.
+router.patch('/:username/:task_id', auth, async (req, res) => {
+    // task_name,
+    // completed,
+    // task_due_date,
+    // priority,
+
+    try {
+        const flag = false;
+        if (req.body.task_name) {
+            await TaskModel.updateOne({user_name: req.params.username, _id: req.params.task_id}, {$set: {task_name: req.body.task_name}});
+            flag = true;
+        }       
+        if (req.body.completed) {
+            await TaskModel.updateOne({user_name: req.params.username, _id: req.params.task_id}, {$set: {completed: req.body.completed}});
+            flag = true;
+        }       
+        if (req.body.task_due_date) {
+            await TaskModel.updateOne({user_name: req.params.username, _id: req.params.task_id}, {$set: {task_due_date: req.body.task_due_date}});
+            flag = true;
+        }       
+        if (req.body.priority) {
+            await TaskModel.updateOne({user_name: req.params.username, _id: req.params.task_id}, {$set: {priority: req.body.priority}});
+            flag = true;
+        }   
+
+        if (flag) {
+            const getUpdatedTask = await TaskModel.find({user_name: req.params.username, _id: req.params.task_id});
+            const updatedTask = getUpdatedTask[0];
+            res.status(200).json(updatedTask);
+        }
+
+    } catch (error) {
+        res.status(500).json({message: "Error in completing the request."})
+    }
+
+})
+
 router.delete('/task/:task_id', auth, async (req, res) => {
     try {
         const deletedTask = await TaskModel.deleteOne({"_id": req.params.task_id});

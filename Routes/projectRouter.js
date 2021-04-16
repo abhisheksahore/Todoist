@@ -107,6 +107,30 @@ router.get('sections/:username/:project_id', auth, async (req, res) => {
 
 
 
+// PATCH - patching a project.
+router.patch('/:username/:project_id', auth, async (req, res) => {
+    try {
+
+        const flag = false;
+        if (req.body.project_name) {
+            await ProjectModel.updateOne({user_name: req.params.username, _id: req.params.project_id}, {$set: {project_name: req.body.project_name}});
+            flag = true;
+        }        
+        if (req.body.is_completed) {
+            await ProjectModel.updateOne({user_name: req.params.username, _id: req.params.project_id}, {$set: {is_completed: req.body.is_completed}});
+            flag = true;
+        }        
+        if (flag === true) {
+            const getUpdatedProject = await ProjectModel.find({_id: req.params.project_id});
+            const updatedProject = getUpdatedProject[0];
+            res.status(200).json(updatedProject);
+        }
+    } catch (error) {
+        res.status(500).json({message: "Error in completing the request."})
+    }
+})
+
+
 router.delete('/:username/:project_id', auth, async (req, res)=> {
     try {
         if (req.params.project_id && req.params.username) {

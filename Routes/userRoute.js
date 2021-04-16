@@ -136,9 +136,39 @@ router.delete('/deleteUser', auth, async (req, res)=> {
     }
 })
 
-router.patch('/updateUser', auth, async (req, res) => {
+router.patch('/updateUser/:username', auth, async (req, res) => {
     try {
-        
+        if (req.params.username) {
+            if (req.body.password) {
+                const secret_salt = await bcrypt.genSalt();
+                const hashed_password = await bcrypt.hash(req.body.password, secret_salt);
+                await UserModel.updateOne({username: req.params.username}, {$set: {password: hashed_password}});          
+            }
+            if (req.body.email) {
+                if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(req.body.email)) {
+                    await UserModel.updateOne({username: req.params.username}, {$set: {email: req.body.email}});
+                } else {
+                    res.status(400).json({message: "Invalid email."});
+                }
+            }
+            if (req.body.via_email) {
+                await UserModel.updateOne({username: req.params.username}, {$set: {via_email: req.body.via_email}});
+            }
+            if (req.body.via_desktop) {
+                await UserModel.updateOne({username: req.params.username}, {$set: {via_desktop: req.body.via_desktop}});
+            }
+            if (req.body.should_remind) {
+                await UserModel.updateOne({username: req.params.username}, {$set: {should_remind: req.body.should_remind}});
+            }
+            if (req.body.remind_before) {
+                await UserModel.updateOne({username: req.params.username}, {$set: {remind_before: req.body.remind_before}});
+            }
+            const getUpdatedUser = await UserModel.find({username: req.params.username});
+            const updatedUser = getUpdatedUser[0];
+            res.status(200).json(updatedUser);
+        } else {
+            res.status(400).json({message: "send the username in url params"});
+        }
     } catch (error) {
         res.status(500).json({message: "Error in completing the request."});
     }
