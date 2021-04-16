@@ -56,7 +56,7 @@ router.get('/:username', auth, async (req, res)=> {
     try {
         if (req.params.username) {
             const getAllSection = await SectionModel.find({user_name: req.params.username});
-            res.status(200).json(getAllSections);
+            res.status(200).json(getAllSection);
         } else {
             res.status(400).json({message: "send the username with the url params"});
         }
