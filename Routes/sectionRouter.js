@@ -12,10 +12,17 @@ router.post('/section', auth, async (req, res) => {
         if (req.body.username === undefined) {
             res.status(400).json({message: "Send the username of the user in the body."});
         }
+        let Project_id;
+        if (req.body.project_id) {
+            project_id = req.body.project_id;
+        } else {
+            project_id = null;
+        }
         if (req.body.username && req.body.section_name) {
             const newSection = new SectionModel({
                 user_name: req.body.username, 
-                section_name: req.body.section_name
+                section_name: req.body.section_name,
+                project_id: project_id
             }) 
             const SectionCreated = await newSection.save();
             res.status(200).json({SectionCreated});

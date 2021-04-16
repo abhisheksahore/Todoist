@@ -10,6 +10,18 @@ router.post('/task', auth, async (req, res) => {
         if (req.body.username === undefined) {
             res.status(400).json({message: "Send the username of the user in the body."});
         }
+        let project_id, section_id;
+        if (req.body.project_id) {
+            project_id = req.body.project_id;
+        } else {
+            project_id = null;
+        }
+        if (req.body.section_id) {
+            section_id = req.body.section_id;
+        } else {
+            section_id = null;
+        }
+        
 
         if (req.body.username && req.body.task_name && req.body.directly_in_project && req.body.in_section) {
             const newTask = new TaskModel({
@@ -17,7 +29,9 @@ router.post('/task', auth, async (req, res) => {
                 task_name: req.body.task_name,
                 in_section: req.body.in_section,
                 directly_in_project: req.body.directly_in_project,
-                task_due_date: req.body.a
+                task_due_date: req.body.task_due_date,
+                project_id : project_id,
+                section_id : section_id
             })
             const taskCreated = await newTask.save();
             res.status(200).json(taskCreated);
@@ -58,6 +72,22 @@ router.get('/:username', auth, async (req, res) => {
         res.status(500).json({error});
     }
 })
+
+// GET - getting all the tasks belonging to a project.
+router.get('/:project_id/directly_in_project', auth, async (req, res)=> {
+    try {
+        if (req.params.project_id) {
+            const getTasks = await TaskModel.find({project_id: req.params.project_id, section_id: null});
+            const tasks = getTasks[0];
+            res.status(200).json(tasks);           
+        } else {
+            res.status(400).json({message: "send project id in url params"});
+        }
+    } catch (error) {
+        res.status(500).json({message: "Error in completing the request."})
+    }
+})
+
 
 
 router.get('/:username/today', auth, async (req, res) => {

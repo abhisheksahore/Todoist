@@ -57,6 +57,12 @@ const TaskModelSchema = new mongoose.Schema({
     in_section: { 
         type: Boolean, 
         required: true
+    }, 
+    project_id: {
+        type: String
+    },
+    section_id: {
+        type: String
     } 
 })
 

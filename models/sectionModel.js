@@ -16,6 +16,9 @@ const SectionModelSchema = new mongoose.Schema({
     invited_user_ids: { 
         type: Array, 
         default: []
+    },
+    project_id: {
+        type: String
     }
 
 })
