@@ -22,7 +22,7 @@ router.post('/project', auth, async (req, res) => {
             })
             const projectCreated = await newProject.save();
 
-            await UserModel.updateOne({username: req.body.username}, {$push: {project: projectCreated._id}})
+            await UserModel.updateOne({username: req.body.username}, {$push: {projects: projectCreated._id}})
             res.status(200).json(projectCreated);
         } else {
             res.status(400).json({message: "send the username and project name in body of the request."});
