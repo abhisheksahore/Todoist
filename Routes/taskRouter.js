@@ -130,7 +130,7 @@ router.patch('/:username/:task_id', auth, async (req, res) => {
     // priority,
 
     try {
-        const flag = false;
+        let flag = false;
         if (req.body.task_name) {
             await TaskModel.updateOne({user_name: req.params.username, _id: req.params.task_id}, {$set: {task_name: req.body.task_name}});
             flag = true;
