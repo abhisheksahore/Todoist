@@ -23,7 +23,7 @@ router.post('/task', auth, async (req, res) => {
         }
         
 
-        if (req.body.username && req.body.task_name && req.body.directly_in_project && req.body.in_section) {
+        if (req.body.username && req.body.task_name) {
             const newTask = new TaskModel({
                 user_name: req.body.username,
                 task_name: req.body.task_name,
